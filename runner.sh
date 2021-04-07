@@ -18,8 +18,8 @@ for testd in * ; do
         simargs=$(cat "${testd}/${testd}.txt")
         java -jar proto-sim-1.0-SNAPSHOT.jar ${simargs}
         mkdir -p "${testd}"/output
-        mv -- *.svg *.xls output
-        git stage output/*
+        mv -- *.svg *.xls "${testd}"/output/
+        git stage "${testd}"/output/*
         git commit -m "simulated ${testd}"
     fi
 done
