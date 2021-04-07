@@ -16,6 +16,6 @@ jobs:
 
       - name: Run Simulation
         run: bash runner.sh
-        with:
+        env:
           GITHUB_TOKEN: ${{ github.token }}
           BRANCH: "master"
