@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Install packages
         run: |
-          sudo apt update && sudo apt install -y openjdk-11-jdk git Xvfb
+          sudo apt update && sudo apt install -y openjdk-11-jdk git xvfb
           Xvfb :99 &
           export DISPLAY=:99
 
