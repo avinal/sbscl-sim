@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install packages
-        run: sudo apt update && sudo apt install -y openjdk-11-jdk git curl
+        run: sudo apt update && sudo apt install -y openjdk-11-jdk git wget
 
       - uses: actions/checkout@v2
 
