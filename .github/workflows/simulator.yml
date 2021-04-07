@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Install packages
         run: |
-          sudo apt update && sudo apt install -y openjdk-11-jdk git wget xorg-x11-server-Xvfb
+          sudo apt update && sudo apt install -y openjdk-11-jdk git Xvfb
           Xvfb :99 &
           export DISPLAY=:99
 
