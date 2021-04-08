@@ -1,8 +1,20 @@
 package com.sbscl.sim;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.logging.Logger;
+
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.commons.math.ode.DerivativeException;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -12,26 +24,15 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
-import org.sbml.jsbml.ext.arrays.Dimension;
-import org.sbml.jsbml.ext.render.Rectangle;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
-import org.simulator.math.odes.*;
+import org.simulator.math.odes.AbstractDESSolver;
+import org.simulator.math.odes.AdaptiveStepsizeIntegrator;
+import org.simulator.math.odes.DESSolver;
+import org.simulator.math.odes.MultiTable;
 import org.simulator.math.odes.MultiTable.Block.Column;
-import org.simulator.plot.PlotMultiTable;
+import org.simulator.math.odes.RosenbrockSolver;
 import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
-
-import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.xml.stream.XMLStreamException;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.logging.Logger;
 
 public class SBMLSimulator implements PropertyChangeListener {
     private String fileName = null;
