@@ -1,14 +1,22 @@
 package com.sbscl.sim;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.svg.SVGGraphics2D;
 import org.jfree.svg.SVGUtils;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.ext.arrays.Dimension;
+import org.sbml.jsbml.ext.render.Rectangle;
 import org.sbml.jsbml.validator.ModelOverdeterminedException;
 import org.simulator.math.odes.*;
+import org.simulator.math.odes.MultiTable.Block.Column;
 import org.simulator.plot.PlotMultiTable;
 import org.simulator.sbml.EquationSystem;
 import org.simulator.sbml.SBMLinterpreter;
@@ -22,6 +30,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.logging.Logger;
 
 public class SBMLSimulator implements PropertyChangeListener {
@@ -35,7 +44,6 @@ public class SBMLSimulator implements PropertyChangeListener {
     private static final Logger logger = Logger.getLogger(SBMLSimulator.class.getName());
     private static final String RESULT = "result";
 
-
     public SBMLSimulator(String fileName, double stepSize, double timeEnd, double absTol, double relTol) {
         this.fileName = fileName;
         this.absTol = TOLERANCE_FACTOR * absTol;
@@ -47,7 +55,8 @@ public class SBMLSimulator implements PropertyChangeListener {
     public SBMLSimulator() {
     }
 
-    public void simulate() throws XMLStreamException, IOException, ModelOverdeterminedException, SBMLException, DerivativeException {
+    public void simulate()
+            throws XMLStreamException, IOException, ModelOverdeterminedException, SBMLException, DerivativeException {
 
         SBMLDocument sbmlDocument = (new SBMLReader()).readSBML(fileName);
         Model model = sbmlDocument.getModel();
@@ -99,19 +108,46 @@ public class SBMLSimulator implements PropertyChangeListener {
         if (solution == null) {
             return;
         }
-        PlotMultiTable plotMultiTable = new PlotMultiTable(solution, title);
-        plotMultiTable.pack();
-        plotMultiTable.setSize(1920, 1080);
-        JComponent jComponent = (JComponent) plotMultiTable.getComponent(0);
-        SVGGraphics2D svgGraphics2D = new SVGGraphics2D(jComponent.getWidth(), jComponent.getHeight());
-        jComponent.paint(svgGraphics2D);
+
+        JFreeChart jFreeChart = ChartFactory.createLineChart(title, "time", "concentration (nM)", createDataset(),
+                PlotOrientation.VERTICAL, true, true, false);
+
+        // ChartPanel chartPanel = new ChartPanel(jFreeChart);
+        // chartPanel.setPreferredSize(new java.awt.Dimension(1920, 1080));
+        // PlotMultiTable plotMultiTable = new PlotMultiTable(solution, title);
+        // plotMultiTable.pack();
+        // plotMultiTable.setSize(1920, 1080);
+        // JComponent jComponent = (JComponent) plotMultiTable.getComponent(0);
+        SVGGraphics2D svgGraphics2D = new SVGGraphics2D(1920, 1080);
+        jFreeChart.draw(svgGraphics2D, new java.awt.Rectangle(0, 0, 1920, 1080));
         try {
             SVGUtils.writeToSVG(new File(outFile + ".svg"), svgGraphics2D.getSVGElement());
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println(e);
         }
-        plotMultiTable.dispose();
 
+        // jComponent.paint(svgGraphics2D);
+        // try {
+        // SVGUtils.writeToSVG(new File(outFile + ".svg"),
+        // svgGraphics2D.getSVGElement());
+        // } catch (IOException e) {
+        // System.err.println(e);
+        // }
+        // plotMultiTable.dispose();
+
+    }
+
+    private DefaultCategoryDataset createDataset() {
+        DefaultCategoryDataset data = new DefaultCategoryDataset();
+        for (int i = 1; i < solution.getColumnCount(); i++) {
+            Column col = solution.getColumn(i);
+            int time_step = 0;
+            for (Iterator<Double> iter = col.iterator(); iter.hasNext(); time_step++) {
+                data.addValue(iter.next().doubleValue(), col.getColumnName(),
+                        String.valueOf(solution.getTimePoint(time_step)));
+            }
+        }
+        return data;
     }
 
     @Override
