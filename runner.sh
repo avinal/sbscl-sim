@@ -10,16 +10,14 @@ remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${GITHUB_R
 cd testfiles || exit
 
 # download the latest jar
-wget -nv https://github.com/avinal/sbscl-sim/releases/download/v1.0-SNAPSHOT/proto-sim-1.0-SNAPSHOT.jar
+wget -nv https://github.com/avinal/sbscl-sim/releases/download/v2.0/proto-sim-2.0.jar
 
 for testd in * ; do
     if [ -d "$testd" ]
     then
         simargs=$(cat "${testd}/${testd}.txt")
-        java -jar proto-sim-1.0-SNAPSHOT.jar ${simargs}
-        mkdir -p "${testd}"/output
-        mv -- *.svg *.xls "${testd}"/output/
-        git stage "${testd}"/output/*
+        java -jar proto-sim-2.0.jar ${simargs}
+        git stage "${testd}/"
         git commit -m "simulated ${testd}"
     fi
 done
