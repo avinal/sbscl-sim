@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install packages
-        run: sudo apt update && sudo apt install -y openjdk-11-jdk git curl
+        run: |
+          sudo apt update && sudo apt install -y openjdk-11-jdk git xvfb
+          Xvfb :99 &
+          export DISPLAY=:99
 
       - uses: actions/checkout@v2
 
@@ -18,4 +21,3 @@ jobs:
         run: bash runner.sh
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          BRANCH: "master"

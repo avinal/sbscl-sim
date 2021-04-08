@@ -10,23 +10,26 @@ remote_repo="https://${GITHUB_ACTOR}:${INPUT_GITHUB_TOKEN}@github.com/${GITHUB_R
 cd testfiles || exit
 
 # download the latest jar
-wget https://github.com/avinal/sbscl-sim/releases/download/v1.0-SNAPSHOT/proto-sim-1.0-SNAPSHOT.jar
+wget -nv https://github.com/avinal/sbscl-sim/releases/download/v1.1/proto-sim-1.1.jar
 
 for testd in * ; do
     if [ -d "$testd" ]
     then
-        simargs=$(cat "${testd}/${testd}.txt")
-        java -jar proto-sim-1.0-SNAPSHOT.jar "${simargs}"
-        mkdir -p "${testd}/output"
-        mv -- *.svg *.xls output
-        git stage output/*
+        simargs=$(cut -d "," --output-delimiter=" " -f 1- < "${testd}/${testd}.csv")
+        java -jar proto-sim-1.1.jar ${simargs[@]}
+        cd "$testd"
+        {
+            printf "# Simulation result for %s\n## Input Details\n\n- Filename: %s\n- Step Size: %s\n- Time End: %s\n- Relative Tolerance: %s\n- Absolute Tolerance: %s\n## Output \n\nTable: [%s](%s)\n<p align=center><img src=%s></p>\n" "${testd}" ${simargs[@]} "$(find . -type f -name "*.xls")" "$(find . -type f -name "*.xls")" "$(find . -type f -name "*.svg")"
+        } > README.md
+        cd ..
+        git stage "${testd}/"
         git commit -m "simulated ${testd}"
     fi
 done
 
 git remote add publisher "${remote_repo}"
 
-git checkout ${INPUT_BRANCH}
+git checkout master
 
 # push to github
-git push publisher ${INPUT_BRANCH}
+git push publisher master
