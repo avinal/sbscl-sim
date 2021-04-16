@@ -7,7 +7,7 @@ This is a prototype SBML simulator for GitHub Actions.
 
 1. Fork this repo and clone to your system
     ```bash
-        git clone https://github.com/<username>/sbscl-sim.git
+        git clone https://github.com/username/sbscl-sim.git
     ```
 
 2. Add your test files and config in [testfiles](/testfiles) directory as directed below.
@@ -28,7 +28,7 @@ This is a prototype SBML simulator for GitHub Actions.
         git push origin master
     ```
 
-4. Go to [https://github.com/<username>/sbscl-sim/actions](https://github.com/avinal/sbscl-sim/actions) and you should see the GitHub Actions executing
+4. Go to [https://github.com/username/sbscl-sim/actions](https://github.com/avinal/sbscl-sim/actions) and you should see the GitHub Actions executing
 
 5. After simulation is complete you can check the test folder, the results will be uploaded automatically 
 
